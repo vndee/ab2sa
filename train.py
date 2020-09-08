@@ -48,8 +48,8 @@ def train(data: str,
 
     # Load dataset
     train_dataset, test_dataset = VLSP2018(data=data, file='train'), VLSP2018(data=data, file='test')
-    train_loader, test_loader = DataLoader(train_dataset, shuffle=True, batch_size=2), \
-                                DataLoader(test_dataset, shuffle=True, batch_size=2)
+    train_loader, test_loader = DataLoader(train_dataset, shuffle=True, batch_size=batch_size), \
+                                DataLoader(test_dataset, shuffle=True, batch_size=batch_size)
 
     # Build model
     num_aspect, num_polarity = train_dataset.num_aspect, train_dataset.num_polarity
@@ -58,7 +58,9 @@ def train(data: str,
         model = torch.nn.DataParallel(model)
 
     # Criterion
-    criterion = torch.nn.BCEWithLogitsLoss()
+    # criterion = torch.nn.BCEWithLogitsLoss()
+    criterion = torch.nn.CrossEntropyLoss()
+    # criterion = torch.nn.MultiLabelMarginLoss()
 
     # Optimizer
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
@@ -74,10 +76,19 @@ def train(data: str,
         _preds, _targets = None, None
 
         for idx, (items, labels) in enumerate(tqdm(train_loader, desc=f'Training epoch {epoch}/{num_epochs}')):
+            model.train()
             items = items.to(device)
             labels = labels.type(torch.FloatTensor).to(device)
             preds = model(items)
-            loss = criterion(preds, labels)
+
+            loss = None
+            for idx in range(num_aspect):
+                pred = preds[:, idx, :]
+                label = torch.argmax(labels[:, idx, :], dim=-1).type(torch.LongTensor).to(device)
+                logger.info(pred)
+                logger.info(label)
+                _loss = criterion(pred, label)
+                loss = loss + _loss if loss is not None else _loss
 
             loss.backward()
             if idx != 0 and idx % accumulation_step == 0:
