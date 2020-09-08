@@ -52,7 +52,7 @@ def train(data: str,
                                 DataLoader(test_dataset, shuffle=True, batch_size=batch_size)
 
     # Build model
-    num_aspect, num_polarity = train_dataset.num_aspect, train_dataset.num_polarity
+    num_aspect, num_polarity = train_dataset.num_aspect + 1, train_dataset.num_polarity + 1
     model = Model(num_aspect=num_aspect, num_polarity=num_polarity).to(device)
     if gpus.split(',').__len__() > 1:
         model = torch.nn.DataParallel(model)
@@ -79,14 +79,13 @@ def train(data: str,
             model.train()
             items = items.to(device)
             labels = labels.type(torch.FloatTensor).to(device)
-            preds = model(items)
+            attn_mask = (items > 0).to(device)
+            preds = model(items, attn_mask)
 
             loss = None
             for idx in range(num_aspect):
                 pred = preds[:, idx, :]
                 label = torch.argmax(labels[:, idx, :], dim=-1).type(torch.LongTensor).to(device)
-                logger.info(pred)
-                logger.info(label)
                 _loss = criterion(pred, label)
                 loss = loss + _loss if loss is not None else _loss
 
@@ -120,8 +119,15 @@ def train(data: str,
             for idx, (items, labels) in enumerate(tqdm(test_loader, desc=f'Validation epoch {epoch}/{num_epochs}')):
                 items = items.to(device)
                 labels = labels.type(torch.FloatTensor).to(device)
-                preds = model(items)
-                loss = criterion(preds, labels)
+                attn_mask = (items > 0).to(device)
+                preds = model(items, attn_mask)
+
+                loss = None
+                for idx in range(num_aspect):
+                    pred = preds[:, idx, :]
+                    label = torch.argmax(labels[:, idx, :], dim=-1).type(torch.LongTensor).to(device)
+                    _loss = criterion(pred, label)
+                    loss = loss + _loss if loss is not None else _loss
 
                 val_loss = val_loss + loss.item()
                 preds = torch.argmax(preds, dim=-1).view(-1)
