@@ -83,7 +83,6 @@ class Model(nn.Module):
 
     def forward(self, x, attn_mask):
         x = self.phobert(x, attention_mask=attn_mask)
-        logger.info(x[0].shape)
         x = self.slot_attn(x[0])
         x = self.linear(x)
         x = self.softmax(x)

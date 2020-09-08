@@ -52,7 +52,7 @@ def train(data: str,
                                 DataLoader(test_dataset, shuffle=True, batch_size=batch_size)
 
     # Build model
-    num_aspect, num_polarity = train_dataset.num_aspect + 1, train_dataset.num_polarity + 1
+    num_aspect, num_polarity = train_dataset.num_aspect, train_dataset.num_polarity
     model = Model(num_aspect=num_aspect, num_polarity=num_polarity).to(device)
     if gpus.split(',').__len__() > 1:
         model = torch.nn.DataParallel(model)

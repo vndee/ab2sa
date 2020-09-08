@@ -96,9 +96,9 @@ class VLSP2018(Dataset):
         self.attribute_restaurant = ['GENERAL', 'PRICES', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
         self.aspect_restaurant = [f'{x}#{y}' for x in self.entity_restaurant for y in self.attribute_restaurant]
 
-        self.num_aspect = self.aspect_hotel.__len__() if data == 'Hotel' else self.aspect_restaurant.__len__()
+        self.num_aspect = 1 + self.aspect_hotel.__len__() if data == 'Hotel' else self.aspect_restaurant.__len__()
         self.polarities = ['negative', 'neural', 'positive']
-        self.num_polarity = self.polarities.__len__()
+        self.num_polarity = 1 + self.polarities.__len__()
         self.file = self.file.split('\n\n')
 
         self.rdr_segmenter = VnCoreNLP('./vncorenlp/VnCoreNLP-1.1.1.jar', annotators='wseg', max_heap_size='-Xmx500m')
