@@ -25,7 +25,7 @@ def evaluate(_preds, _targets):
     return acc, f1
 
 
-@click.command(name='HSA Trainer')
+@click.command(name='AB2SA Trainer')
 @click.option('--data', type=str, default='Hotel', help='Dataset use to train')
 @click.option('--device', type=str, default='cuda', help='Device use to train')
 @click.option('--gpus', type=str, default='0', help='GPUs id')
@@ -44,6 +44,7 @@ def train(data: str,
           experiment_path: str) -> None:
     # Set environment variable for specific GPU training
     os.environ['CUDA_VISIBLE_DEVICES'] = gpus
+    os.makedirs(experiment_path, exist_ok=True)
 
     # Load dataset
     train_dataset, test_dataset = VLSP2018(data=data, file='train'), VLSP2018(data=data, file='test')
