@@ -3,12 +3,15 @@ import click
 import torch
 import pandas as pd
 import numpy as np
-from data import VLSP2018
-from utils import get_logger
+
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 from sklearn.metrics import classification_report
+
+from data import VLSP2018
+from utils import get_logger
 from model import Model
+from loss import FocalLoss
 
 logger = get_logger('Trainer')
 
@@ -29,9 +32,10 @@ def evaluate(_preds, _targets):
 @click.option('--data', type=str, default='Hotel', help='Dataset use to train')
 @click.option('--device', type=str, default='cuda', help='Device use to train')
 @click.option('--gpus', type=str, default='0', help='GPUs id')
-@click.option('--batch_size', type=int, default=2, help='Training batch size')
+@click.option('--batch_size', type=int, default=8, help='Training batch size')
 @click.option('--num_epochs', type=int, default=10, help='Number of training epoch')
 @click.option('--learning_rate', type=float, default=2e-3, help='Learning rate')
+@click.option('--num_workers', type=int, default=4, help='Number of data loader workers')
 @click.option('--accumulation_step', type=int, default=100, help='Optimizer accumulation step')
 @click.option('--experiment_path', type=str, default='outputs/', help='Experiment output path')
 def train(data: str,
@@ -40,6 +44,7 @@ def train(data: str,
           batch_size: int,
           num_epochs: int,
           learning_rate: float,
+          num_workers: int,
           accumulation_step: int,
           experiment_path: str) -> None:
     # Set environment variable for specific GPU training
@@ -48,7 +53,7 @@ def train(data: str,
 
     # Load dataset
     train_dataset, test_dataset = VLSP2018(data=data, file='train'), VLSP2018(data=data, file='test')
-    train_loader, test_loader = DataLoader(train_dataset, shuffle=True, batch_size=batch_size), \
+    train_loader, test_loader = DataLoader(train_dataset, shuffle=True, batch_size=batch_size),\
                                 DataLoader(test_dataset, shuffle=True, batch_size=batch_size)
 
     # Build model
@@ -58,8 +63,9 @@ def train(data: str,
         model = torch.nn.DataParallel(model)
 
     # Criterion
+    criterion = FocalLoss()
     # criterion = torch.nn.BCEWithLogitsLoss()
-    criterion = torch.nn.CrossEntropyLoss()
+    # criterion = torch.nn.CrossEntropyLoss()
     # criterion = torch.nn.MultiLabelMarginLoss()
 
     # Optimizer
@@ -82,12 +88,13 @@ def train(data: str,
             attn_mask = (items > 0).to(device)
             preds = model(items, attn_mask)
 
-            loss = None
-            for idx in range(num_aspect):
-                pred = preds[:, idx, :]
-                label = torch.argmax(labels[:, idx, :], dim=-1).type(torch.LongTensor).to(device)
-                _loss = criterion(pred, label)
-                loss = loss + _loss if loss is not None else _loss
+            loss = criterion(preds, labels)
+            # loss = None
+            # for idx in range(num_aspect):
+            #     pred = preds[:, idx, :]
+            #     label = torch.argmax(labels[:, idx, :], dim=-1).type(torch.LongTensor).to(device)
+            #     _loss = criterion(pred, label)
+            #     loss = loss + _loss if loss is not None else _loss
 
             loss.backward()
             if idx != 0 and idx % accumulation_step == 0:
@@ -122,12 +129,13 @@ def train(data: str,
                 attn_mask = (items > 0).to(device)
                 preds = model(items, attn_mask)
 
-                loss = None
-                for idx in range(num_aspect):
-                    pred = preds[:, idx, :]
-                    label = torch.argmax(labels[:, idx, :], dim=-1).type(torch.LongTensor).to(device)
-                    _loss = criterion(pred, label)
-                    loss = loss + _loss if loss is not None else _loss
+                loss = criterion(preds, labels)
+                # loss = None
+                # for idx in range(num_aspect):
+                #     pred = preds[:, idx, :]
+                #     label = torch.argmax(labels[:, idx, :], dim=-1).type(torch.LongTensor).to(device)
+                #     _loss = criterion(pred, label)
+                #     loss = loss + _loss if loss is not None else _loss
 
                 val_loss = val_loss + loss.item()
                 preds = torch.argmax(preds, dim=-1).view(-1)
@@ -150,15 +158,17 @@ def train(data: str,
 
             if best_accuracy < val_acc:
                 best_accuracy = val_acc
-                logger.info(f'New state-of-the-art model detected. Save to {experiment_path}.')
 
                 if not os.path.exists(os.path.join(experiment_path, 'checkpoints')):
                     os.makedirs(os.path.join(experiment_path, 'checkpoints'))
 
-                torch.save(model.state_dict(), os.path.join(experiment_path, 'checkpoints', 'cpkt.vndee'))
+                saved_path = os.path.join(experiment_path, 'checkpoints', 'cpkt.vndee')
+                torch.save(model.state_dict(), saved_path)
                 with open(os.path.join(experiment_path, 'checkpoints', 'result.txt'), 'w+') as stream:
                     stream.write(f'[{epoch}/{num_epochs}] train_acc: {train_acc} - train_loss: {train_loss} - '
                                  f'train_f1: {train_f1} - val_acc: {val_acc} - val_loss: {val_loss} - val_f1: {val_f1}')
+
+                logger.info(f'New state-of-the-art model detected. Save to {saved_path}')
 
     df.to_csv(f'{experiment_path}/history.csv')
 
