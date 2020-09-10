@@ -28,6 +28,11 @@ def evaluate(_preds, _targets):
     return acc, f1
 
 
+def smooth_BCE(eps=0.1):  # https://github.com/ultralytics/yolov3/issues/238#issuecomment-598028441
+    # return positive, negative label smoothing BCE targets
+    return 1.0 - 0.5 * eps, 0.5 * eps
+
+
 @click.command(name='AB2SA Trainer')
 @click.option('--data', type=str, default='Hotel', help='Dataset use to train')
 @click.option('--device', type=str, default='cuda', help='Device use to train')
@@ -164,6 +169,7 @@ def train(data: str,
 
                 saved_path = os.path.join(experiment_path, 'checkpoints', 'cpkt.vndee')
                 torch.save(model.state_dict(), saved_path)
+
                 with open(os.path.join(experiment_path, 'checkpoints', 'result.txt'), 'w+') as stream:
                     stream.write(f'[{epoch}/{num_epochs}] train_acc: {train_acc} - train_loss: {train_loss} - '
                                  f'train_f1: {train_f1} - val_acc: {val_acc} - val_loss: {val_loss} - val_f1: {val_f1}')

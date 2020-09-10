@@ -75,9 +75,9 @@ class Model(nn.Module):
         for param in self.phobert.parameters():
             param.requires_grad = False
 
-        self.slot_attn = SlotAttention(num_slots=num_aspect,
-                                       dim=embedding_dim,
-                                       hidden_dim=slot_attention_hidden_dim)
+        # self.slot_attn = SlotAttention(num_slots=10,
+        #                                dim=embedding_dim,
+        #                                hidden_dim=slot_attention_hidden_dim)
         self.linear = nn.Linear(in_features=embedding_dim, out_features=num_polarity)
         self.softmax = nn.Softmax(dim=-1)
 
