@@ -135,7 +135,8 @@ class VLSP2018(Dataset):
         text = self.rdr_segmenter.tokenize(text)
         text = ' '.join(text[0])
         text = torch.tensor(self.tokenizer.encode(text))
-        labels = torch.nn.functional.one_hot(labels.squeeze(-1).type(torch.LongTensor))
+        labels = labels.squeeze(-1).type(torch.LongTensor)
+        # labels = torch.nn.functional.one_hot(labels)
         return padding(text, self.max_length), labels
 
     def __len__(self):

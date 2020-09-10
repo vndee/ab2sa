@@ -28,11 +28,6 @@ def evaluate(_preds, _targets):
     return acc, f1
 
 
-def smooth_BCE(eps=0.1):  # https://github.com/ultralytics/yolov3/issues/238#issuecomment-598028441
-    # return positive, negative label smoothing BCE targets
-    return 1.0 - 0.5 * eps, 0.5 * eps
-
-
 @click.command(name='AB2SA Trainer')
 @click.option('--data', type=str, default='Hotel', help='Dataset use to train')
 @click.option('--device', type=str, default='cuda', help='Device use to train')
@@ -89,7 +84,7 @@ def train(data: str,
         for idx, (items, labels) in enumerate(tqdm(train_loader, desc=f'Training epoch {epoch}/{num_epochs}')):
             model.train()
             items = items.to(device)
-            labels = labels.type(torch.FloatTensor).to(device)
+            # labels = labels.type(torch.FloatTensor).to(device)
             attn_mask = (items > 0).to(device)
             preds = model(items, attn_mask)
 
@@ -130,7 +125,7 @@ def train(data: str,
 
             for idx, (items, labels) in enumerate(tqdm(test_loader, desc=f'Validation epoch {epoch}/{num_epochs}')):
                 items = items.to(device)
-                labels = labels.type(torch.FloatTensor).to(device)
+                # labels = labels.type(torch.FloatTensor).to(device)
                 attn_mask = (items > 0).to(device)
                 preds = model(items, attn_mask)
 
