@@ -47,7 +47,7 @@ if __name__ == '__main__':
         train_f1, test_f1 = None, None
         _preds, _targets = None, None
 
-        for idx, (items, labels) in tqdm(enumerate(train_loader), desc='Training'):
+        for idx, (items, labels) in enumerate(tqdm(train_loader, desc='Training')):
             items = items.to(device)
             attn_masks = (items > 0).to(device)
             labels = labels.to(device)
@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
         with torch.no_grad():
             _preds, _targets = None, None
-            for idx, (items, labels) in tqdm(enumerate(test_loader), desc='Evaluation'):
+            for idx, (items, labels) in enumerate(tqdm(test_loader, desc='Evaluation')):
                 items = items.to(device)
                 attn_masks = (items > 0).to(device)
                 labels = labels.to(device)
