@@ -279,10 +279,10 @@ class VLSP2018ConditionalBert(Dataset):
         lb, _lb = None, None
 
         if self.data == 'hotel':
-            lb = self.aspect_hotel.index(aspect)
+            lb = self.aspect_hotel.index(aspect.strip().lower())
             _lb = torch.zeros((self.aspect_hotel.__len__()))
         elif self.data == 'restaurant':
-            lb = self.aspect_restaurant.index(aspect)
+            lb = self.aspect_restaurant.index(aspect.strip().lower())
             _lb = torch.zeros((self.aspect_restaurant.__len__()))
 
         _lb[lb] = 1
