@@ -290,7 +290,7 @@ class VLSP2018ConditionalBert(Dataset):
         polarity = polarity.strip()
         polarity = ['negative', 'neutral', 'positive'].index(polarity)
         aspect = aspect.replace('#', ', ').replace('&', ' and ').lower()
-        return aspect, lb, polarity
+        return aspect, _lb, polarity
 
     def __getitem__(self, item):
         lines = self.file[item].split('\n')
