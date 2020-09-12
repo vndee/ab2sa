@@ -318,6 +318,6 @@ class VLSP2018ConditionalBert(Dataset):
         return self.file.__len__()
 
 
-data = VLSP2018ConditionalBert(data='Restaurant')
-for item, lb, pl in data:
-    print(item.shape, lb.shape, pl)
+# data = VLSP2018ConditionalBert(data='Restaurant')
+# for item, lb, pl in data:
+#     print(item.shape, lb.shape, pl)
