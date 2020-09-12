@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
     clf = PhobertABSA().to(device)
 
-    train, test = VLSP2018BertPair(data='Hotel', file='train'), VLSP2018BertPair(data='Hotel', file='test')
+    train, test = VLSP2018BertPair(data='Restaurant', file='train'), VLSP2018BertPair(data='Restaurant', file='test')
     train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test, batch_size=batch_size, shuffle=True)
 
