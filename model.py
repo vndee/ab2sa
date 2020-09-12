@@ -81,7 +81,7 @@ class Model(nn.Module):
         self.linear = nn.Linear(in_features=embedding_dim, out_features=num_polarity)
         self.softmax = nn.Softmax(dim=-1)
 
-    def forward(self, x, attn_mask):
+    def forward(self, x, attn_mask, aspects):
         x = self.phobert(x, attention_mask=attn_mask)
         x = self.slot_attn(x[0])
         x = self.linear(x)

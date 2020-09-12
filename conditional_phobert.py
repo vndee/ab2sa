@@ -3,7 +3,7 @@ import numpy as np
 import torch.nn as nn
 from utils import get_logger
 from tqdm import tqdm
-from data import VLSP2018BertPair
+from data import VLSP2018ConditionalBert
 from train import evaluate
 from torch.utils.data import DataLoader
 from transformers import PhobertTokenizer, PhobertModel, RobertaConfig, RobertaForSequenceClassification
@@ -15,13 +15,14 @@ class PhobertABSA(nn.Module):
     def __init__(self, num_labels=3):
         super(PhobertABSA, self).__init__()
         self.phobert = PhobertModel.from_pretrained('vinai/phobert-base')
-        self.linear_1 = nn.Linear(768, 768, bias=True)
+        self.linear_1 = nn.Linear(768 + 56, 768, bias=True)
         self.dropout = nn.Dropout(p=0.1, inplace=False)
         self.linear_2 = nn.Linear(768, num_labels, bias=True)
 
-    def forward(self, x, attn_mask):
+    def forward(self, x, attn_mask, aspects):
         outputs = self.phobert(x, attention_mask=attn_mask)
         cls = outputs[0][:, 0, :]
+        cls = torch.cat((cls, aspects), dim=-1)
         x = self.linear_1(cls)
         x = self.dropout(x)
         x = self.linear_2(x)
@@ -36,7 +37,7 @@ if __name__ == '__main__':
 
     clf = PhobertABSA().to(device)
 
-    train, test = VLSP2018BertPair(data='Hotel', file='train'), VLSP2018BertPair(data='Hotel', file='test')
+    train, test = VLSP2018ConditionalBert(data='Hotel', file='train'), VLSP2018ConditionalBert(data='Hotel', file='test')
     train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test, batch_size=batch_size, shuffle=True)
 
@@ -53,12 +54,13 @@ if __name__ == '__main__':
         train_f1, test_f1 = None, None
         _preds, _targets = None, None
 
-        for idx, (items, labels) in enumerate(tqdm(train_loader, desc='Training')):
+        for idx, (items, aspects, labels) in enumerate(tqdm(train_loader, desc='Training')):
             items = items.to(device)
             attn_masks = (items > 0).to(device)
             labels = labels.to(device)
+            aspects = aspects.to(device)
 
-            preds = clf(items, attn_masks)
+            preds = clf(items, attn_masks, aspects)
 
             loss = criterion(preds, labels)
 
@@ -87,12 +89,13 @@ if __name__ == '__main__':
 
         with torch.no_grad():
             _preds, _targets = None, None
-            for idx, (items, labels) in enumerate(tqdm(test_loader, desc='Evaluation')):
+            for idx, (items, aspects, labels) in enumerate(tqdm(test_loader, desc='Evaluation')):
                 items = items.to(device)
                 attn_masks = (items > 0).to(device)
                 labels = labels.to(device)
+                aspects = aspects.to(device)
 
-                preds = clf(items, attn_masks)
+                preds = clf(items, attn_masks, aspects)
 
                 loss = criterion(preds, labels)
                 test_loss = test_loss + loss.item() if test_loss is not None else loss.item()

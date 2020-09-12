@@ -32,14 +32,14 @@ class PhobertABSA(nn.Module):
 if __name__ == '__main__':
     num_epochs = 10
     device = 'cuda'
-    batch_size = 4
+    batch_size = 8
     accumulation_step = 50
 
     clf = PhobertABSA().to(device)
 
     train, test = VLSP2018BertPairTopic(data='Hotel', file='train'), VLSP2018BertPairTopic(data='Hotel', file='test')
-    train_loader = DataLoader(train, batch_size=2, shuffle=True)
-    test_loader = DataLoader(test, batch_size=2, shuffle=True)
+    train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
+    test_loader = DataLoader(test, batch_size=batch_size, shuffle=True)
 
     criterion = torch.nn.CrossEntropyLoss()
 

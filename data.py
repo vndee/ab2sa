@@ -206,6 +206,62 @@ class VLSP2018BertPairTopic(Dataset):
         return self.file.__len__()
 
 
-# data = VLSP2018BertPairTopic(file='test')
-# for item, label in data:
-#     print(item, label)
+class VLSP2018ConditionalBert(Dataset):
+    def __init__(self,
+                 data='Hotel',
+                 file='train',
+                 path=os.path.join('dataset', 'VLSP2018'),
+                 max_length=256):
+        super(VLSP2018ConditionalBert, self).__init__()
+        self.max_length = max_length
+        with open(os.path.join(path, f'VLSP2018-SA-{data}-{file}.prod'), mode='r', encoding='utf-8-sig') as stream:
+            self.file = stream.read()
+
+        self.data = data.lower()
+
+        self.entity_hotel = ['HOTEL', 'ROOMS', 'ROOM_AMENITIES', 'FACILITIES', 'SERVICE', 'LOCATION', 'FOOD&DRINKS']
+        self.attribute_hotel = ['GENERAL', 'PRICES', 'DESIGN&FEATURES', 'CLEANLINESS', 'COMFORT', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
+        self.aspect_hotel = [f'{x}#{y}' for x in self.entity_hotel for y in self.attribute_hotel]
+
+        self.entity_restaurant = ['RESTAURANT', 'FOOD', 'DRINKS', 'AMBIENCE', 'SERVICE', 'LOCATION']
+        self.attribute_restaurant = ['GENERAL', 'PRICES', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
+        self.aspect_restaurant = [f'{x}#{y}' for x in self.entity_restaurant for y in self.attribute_restaurant]
+
+        self.polarities = ['negative', 'neural', 'positive']
+
+        self.file = self.file.split('\n\n')
+        self.rdr_segmenter = VnCoreNLP('./vncorenlp/VnCoreNLP-1.1.1.jar', annotators='wseg', max_heap_size='-Xmx500m')
+        self.tokenizer = PhobertTokenizer.from_pretrained('vinai/phobert-base')
+
+    def label_encode(self, x):
+        x = x.split('\n')
+
+        aspect, polarity = x[0].split(',')
+        lb, _lb = None, None
+
+        if self.data == 'hotel':
+            lb = self.aspect_hotel.index(aspect)
+            _lb = torch.zeros((self.aspect_hotel.__len__()))
+        elif self.data == 'restaurant':
+            lb = self.aspect_restaurant.index(aspect)
+            _lb = torch.zeros((self.aspect_restaurant.__len__()))
+
+        _lb[lb] = 1
+
+        polarity = polarity.strip()
+        polarity = ['negative', 'neutral', 'positive'].index(polarity)
+        aspect = aspect.replace('#', ', ').replace('&', ' and ').lower()
+        return aspect, _lb, polarity
+
+    def __getitem__(self, item):
+        lines = self.file[item].split('\n')
+        label = self.label_encode(lines[1].strip())
+
+        text = f'{lines[0].strip()}'
+        text = self.rdr_segmenter.tokenize(text)
+        text = ' '.join(text[0])
+        text = torch.tensor(self.tokenizer.encode(text))
+        return padding(text, self.max_length), label[1], label[-1]
+
+    def __len__(self):
+        return self.file.__len__()
