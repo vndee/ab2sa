@@ -15,7 +15,7 @@ class PhobertABSA(nn.Module):
     def __init__(self, num_labels=3):
         super(PhobertABSA, self).__init__()
         self.phobert = PhobertModel.from_pretrained('vinai/phobert-base')
-        self.linear_1 = nn.Linear(768 + 34, 768, bias=True)
+        self.linear_1 = nn.Linear(768 + 12, 768, bias=True)
         self.dropout = nn.Dropout(p=0.1, inplace=False)
         self.linear_2 = nn.Linear(768, num_labels, bias=True)
 
