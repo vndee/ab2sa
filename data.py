@@ -44,9 +44,12 @@ class VLSP2018BertPair(Dataset):
                              'rooms#comfort', 'room_amenities#cleanliness', 'facilities#comfort', 'facilities#prices',
                              'room_amenities#design&features', 'hotel#quality']
 
-        self.entity_restaurant = ['RESTAURANT', 'FOOD', 'DRINKS', 'AMBIENCE', 'SERVICE', 'LOCATION']
-        self.attribute_restaurant = ['GENERAL', 'PRICES', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
-        self.aspect_restaurant = [f'{x}#{y}' for x in self.entity_restaurant for y in self.attribute_restaurant]
+        # self.entity_restaurant = ['RESTAURANT', 'FOOD', 'DRINKS', 'AMBIENCE', 'SERVICE', 'LOCATION']
+        # self.attribute_restaurant = ['GENERAL', 'PRICES', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
+        # self.aspect_restaurant = [f'{x}#{y}' for x in self.entity_restaurant for y in self.attribute_restaurant]
+        self.aspect_restaurant = ['drinks#quality', 'drinks#style&options', 'service#general', 'restaurant#prices',
+                                  'food#quality', 'drinks#prices', 'ambience#general', 'food#prices', 'restaurant#miscellaneous',
+                                  'restaurant#general', 'location#general', 'food#style&options']
 
         self.polarities = ['negative', 'neural', 'positive']
 
@@ -116,9 +119,12 @@ class VLSP2018(Dataset):
                              'rooms#comfort', 'room_amenities#cleanliness', 'facilities#comfort', 'facilities#prices',
                              'room_amenities#design&features', 'hotel#quality']
 
-        self.entity_restaurant = ['RESTAURANT', 'FOOD', 'DRINKS', 'AMBIENCE', 'SERVICE', 'LOCATION']
-        self.attribute_restaurant = ['GENERAL', 'PRICES', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
-        self.aspect_restaurant = [f'{x}#{y}' for x in self.entity_restaurant for y in self.attribute_restaurant]
+        # self.entity_restaurant = ['RESTAURANT', 'FOOD', 'DRINKS', 'AMBIENCE', 'SERVICE', 'LOCATION']
+        # self.attribute_restaurant = ['GENERAL', 'PRICES', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
+        # self.aspect_restaurant = [f'{x}#{y}' for x in self.entity_restaurant for y in self.attribute_restaurant]
+        self.aspect_restaurant = ['drinks#quality', 'drinks#style&options', 'service#general', 'restaurant#prices',
+                                  'food#quality', 'drinks#prices', 'ambience#general', 'food#prices', 'restaurant#miscellaneous',
+                                  'restaurant#general', 'location#general', 'food#style&options']
 
         self.num_aspect = 1 + self.aspect_hotel.__len__() if data == 'Hotel' else self.aspect_restaurant.__len__()
         self.polarities = ['negative', 'neural', 'positive']
@@ -194,9 +200,12 @@ class VLSP2018BertPairTopic(Dataset):
                              'rooms#comfort', 'room_amenities#cleanliness', 'facilities#comfort', 'facilities#prices',
                              'room_amenities#design&features', 'hotel#quality']
 
-        self.entity_restaurant = ['RESTAURANT', 'FOOD', 'DRINKS', 'AMBIENCE', 'SERVICE', 'LOCATION']
-        self.attribute_restaurant = ['GENERAL', 'PRICES', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
-        self.aspect_restaurant = [f'{x}#{y}' for x in self.entity_restaurant for y in self.attribute_restaurant]
+        # self.entity_restaurant = ['RESTAURANT', 'FOOD', 'DRINKS', 'AMBIENCE', 'SERVICE', 'LOCATION']
+        # self.attribute_restaurant = ['GENERAL', 'PRICES', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
+        # self.aspect_restaurant = [f'{x}#{y}' for x in self.entity_restaurant for y in self.attribute_restaurant]
+        self.aspect_restaurant = ['drinks#quality', 'drinks#style&options', 'service#general', 'restaurant#prices',
+                                  'food#quality', 'drinks#prices', 'ambience#general', 'food#prices', 'restaurant#miscellaneous',
+                                  'restaurant#general', 'location#general', 'food#style&options']
 
         self.polarities = ['negative', 'neural', 'positive']
 
@@ -211,9 +220,9 @@ class VLSP2018BertPairTopic(Dataset):
         lb = None
 
         if self.data == 'hotel':
-            lb = self.aspect_hotel.index(aspect)
+            lb = self.aspect_hotel.index(aspect.strip().lower())
         elif self.data == 'restaurant':
-            lb = self.aspect_restaurant.index(aspect)
+            lb = self.aspect_restaurant.index(aspect.strip().lower())
 
         polarity = polarity.strip()
         polarity = ['negative', 'neutral', 'positive'].index(polarity)
@@ -260,9 +269,13 @@ class VLSP2018ConditionalBert(Dataset):
                              'rooms#comfort', 'room_amenities#cleanliness', 'facilities#comfort', 'facilities#prices',
                              'room_amenities#design&features', 'hotel#quality']
 
-        self.entity_restaurant = ['RESTAURANT', 'FOOD', 'DRINKS', 'AMBIENCE', 'SERVICE', 'LOCATION']
-        self.attribute_restaurant = ['GENERAL', 'PRICES', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
-        self.aspect_restaurant = [f'{x}#{y}' for x in self.entity_restaurant for y in self.attribute_restaurant]
+        # self.entity_restaurant = ['RESTAURANT', 'FOOD', 'DRINKS', 'AMBIENCE', 'SERVICE', 'LOCATION']
+        # self.attribute_restaurant = ['GENERAL', 'PRICES', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
+        # self.aspect_restaurant = [f'{x}#{y}' for x in self.entity_restaurant for y in self.attribute_restaurant]
+
+        self.aspect_restaurant = ['drinks#quality', 'drinks#style&options', 'service#general', 'restaurant#prices',
+                                  'food#quality', 'drinks#prices', 'ambience#general', 'food#prices', 'restaurant#miscellaneous',
+                                  'restaurant#general', 'location#general', 'food#style&options']
 
         self.cnt = 0
         self.aspect_set = dict()
