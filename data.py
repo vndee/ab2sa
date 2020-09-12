@@ -272,7 +272,6 @@ class VLSP2018ConditionalBert(Dataset):
         # self.entity_restaurant = ['RESTAURANT', 'FOOD', 'DRINKS', 'AMBIENCE', 'SERVICE', 'LOCATION']
         # self.attribute_restaurant = ['GENERAL', 'PRICES', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
         # self.aspect_restaurant = [f'{x}#{y}' for x in self.entity_restaurant for y in self.attribute_restaurant]
-
         self.aspect_restaurant = ['drinks#quality', 'drinks#style&options', 'service#general', 'restaurant#prices',
                                   'food#quality', 'drinks#prices', 'ambience#general', 'food#prices', 'restaurant#miscellaneous',
                                   'restaurant#general', 'location#general', 'food#style&options']
@@ -281,7 +280,7 @@ class VLSP2018ConditionalBert(Dataset):
         self.aspect_set = dict()
         self.polarities = ['negative', 'neural', 'positive']
 
-        self.file = self.file.split('\n\n')
+        self.file = self.file.strip().split('\n\n')
         self.rdr_segmenter = VnCoreNLP('./vncorenlp/VnCoreNLP-1.1.1.jar', annotators='wseg', max_heap_size='-Xmx500m')
         self.tokenizer = PhobertTokenizer.from_pretrained('vinai/phobert-base')
 
