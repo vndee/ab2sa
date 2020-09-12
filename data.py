@@ -31,9 +31,18 @@ class VLSP2018BertPair(Dataset):
 
         self.data = data.lower()
 
-        self.entity_hotel = ['HOTEL', 'ROOMS', 'ROOM_AMENITIES', 'FACILITIES', 'SERVICE', 'LOCATION', 'FOOD&DRINKS']
-        self.attribute_hotel = ['GENERAL', 'PRICES', 'DESIGN&FEATURES', 'CLEANLINESS', 'COMFORT', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
-        self.aspect_hotel = [f'{x}#{y}' for x in self.entity_hotel for y in self.attribute_hotel]
+        # self.entity_hotel = ['HOTEL', 'ROOMS', 'ROOM_AMENITIES', 'FACILITIES', 'SERVICE', 'LOCATION', 'FOOD&DRINKS']
+        # self.attribute_hotel = ['GENERAL', 'PRICES', 'DESIGN&FEATURES', 'CLEANLINESS', 'COMFORT', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
+        # self.aspect_hotel = [f'{x}#{y}' for x in self.entity_hotel for y in self.attribute_hotel]
+        self.aspect_hotel = ['rooms#prices', 'room_amenities#general', 'room_amenities#prices', 'hotel#prices',
+                             'rooms#cleanliness', 'location#general', 'facilities#quality', 'facilities#miscellaneous',
+                             'hotel#design&features', 'facilities#general', 'food&drinks#style&options', 'hotel#miscellaneous',
+                             'food&drinks#quality', 'rooms#miscellaneous', 'rooms#design&features', 'hotel#comfort',
+                             'food&drinks#prices', 'hotel#cleanliness', 'room_amenities#comfort', 'rooms#general',
+                             'room_amenities#quality', 'rooms#quality', 'facilities#design&features', 'facilities#cleanliness',
+                             'food&drinks#miscellaneous', 'room_amenities#miscellaneous', 'hotel#general', 'service#general',
+                             'rooms#comfort', 'room_amenities#cleanliness', 'facilities#comfort', 'facilities#prices',
+                             'room_amenities#design&features', 'hotel#quality']
 
         self.entity_restaurant = ['RESTAURANT', 'FOOD', 'DRINKS', 'AMBIENCE', 'SERVICE', 'LOCATION']
         self.attribute_restaurant = ['GENERAL', 'PRICES', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
@@ -52,9 +61,9 @@ class VLSP2018BertPair(Dataset):
         lb = None
 
         if self.data == 'hotel':
-            lb = self.aspect_hotel.index(aspect)
+            lb = self.aspect_hotel.index(aspect.lower())
         elif self.data == 'restaurant':
-            lb = self.aspect_restaurant.index(aspect)
+            lb = self.aspect_restaurant.index(aspect.lower())
 
         polarity = polarity.strip()
         polarity = ['negative', 'neutral', 'positive'].index(polarity)
@@ -94,9 +103,18 @@ class VLSP2018(Dataset):
 
         self.data = data.lower()
 
-        self.entity_hotel = ['HOTEL', 'ROOMS', 'ROOM_AMENITIES', 'FACILITIES', 'SERVICE', 'LOCATION', 'FOOD&DRINKS']
-        self.attribute_hotel = ['GENERAL', 'PRICES', 'DESIGN&FEATURES', 'CLEANLINESS', 'COMFORT', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
-        self.aspect_hotel = [f'{x}#{y}' for x in self.entity_hotel for y in self.attribute_hotel]
+        # self.entity_hotel = ['HOTEL', 'ROOMS', 'ROOM_AMENITIES', 'FACILITIES', 'SERVICE', 'LOCATION', 'FOOD&DRINKS']
+        # self.attribute_hotel = ['GENERAL', 'PRICES', 'DESIGN&FEATURES', 'CLEANLINESS', 'COMFORT', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
+        # self.aspect_hotel = [f'{x}#{y}' for x in self.entity_hotel for y in self.attribute_hotel]
+        self.aspect_hotel = ['rooms#prices', 'room_amenities#general', 'room_amenities#prices', 'hotel#prices',
+                             'rooms#cleanliness', 'location#general', 'facilities#quality', 'facilities#miscellaneous',
+                             'hotel#design&features', 'facilities#general', 'food&drinks#style&options', 'hotel#miscellaneous',
+                             'food&drinks#quality', 'rooms#miscellaneous', 'rooms#design&features', 'hotel#comfort',
+                             'food&drinks#prices', 'hotel#cleanliness', 'room_amenities#comfort', 'rooms#general',
+                             'room_amenities#quality', 'rooms#quality', 'facilities#design&features', 'facilities#cleanliness',
+                             'food&drinks#miscellaneous', 'room_amenities#miscellaneous', 'hotel#general', 'service#general',
+                             'rooms#comfort', 'room_amenities#cleanliness', 'facilities#comfort', 'facilities#prices',
+                             'room_amenities#design&features', 'hotel#quality']
 
         self.entity_restaurant = ['RESTAURANT', 'FOOD', 'DRINKS', 'AMBIENCE', 'SERVICE', 'LOCATION']
         self.attribute_restaurant = ['GENERAL', 'PRICES', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
@@ -162,9 +180,19 @@ class VLSP2018BertPairTopic(Dataset):
 
         self.data = data.lower()
 
-        self.entity_hotel = ['HOTEL', 'ROOMS', 'ROOM_AMENITIES', 'FACILITIES', 'SERVICE', 'LOCATION', 'FOOD&DRINKS']
-        self.attribute_hotel = ['GENERAL', 'PRICES', 'DESIGN&FEATURES', 'CLEANLINESS', 'COMFORT', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
-        self.aspect_hotel = [f'{x}#{y}' for x in self.entity_hotel for y in self.attribute_hotel]
+        # self.entity_hotel = ['HOTEL', 'ROOMS', 'ROOM_AMENITIES', 'FACILITIES', 'SERVICE', 'LOCATION', 'FOOD&DRINKS']
+        # self.attribute_hotel = ['GENERAL', 'PRICES', 'DESIGN&FEATURES', 'CLEANLINESS', 'COMFORT', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
+        # self.aspect_hotel = [f'{x}#{y}' for x in self.entity_hotel for y in self.attribute_hotel]
+
+        self.aspect_hotel = ['rooms#prices', 'room_amenities#general', 'room_amenities#prices', 'hotel#prices',
+                             'rooms#cleanliness', 'location#general', 'facilities#quality', 'facilities#miscellaneous',
+                             'hotel#design&features', 'facilities#general', 'food&drinks#style&options', 'hotel#miscellaneous',
+                             'food&drinks#quality', 'rooms#miscellaneous', 'rooms#design&features', 'hotel#comfort',
+                             'food&drinks#prices', 'hotel#cleanliness', 'room_amenities#comfort', 'rooms#general',
+                             'room_amenities#quality', 'rooms#quality', 'facilities#design&features', 'facilities#cleanliness',
+                             'food&drinks#miscellaneous', 'room_amenities#miscellaneous', 'hotel#general', 'service#general',
+                             'rooms#comfort', 'room_amenities#cleanliness', 'facilities#comfort', 'facilities#prices',
+                             'room_amenities#design&features', 'hotel#quality']
 
         self.entity_restaurant = ['RESTAURANT', 'FOOD', 'DRINKS', 'AMBIENCE', 'SERVICE', 'LOCATION']
         self.attribute_restaurant = ['GENERAL', 'PRICES', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
@@ -219,14 +247,25 @@ class VLSP2018ConditionalBert(Dataset):
 
         self.data = data.lower()
 
-        self.entity_hotel = ['HOTEL', 'ROOMS', 'ROOM_AMENITIES', 'FACILITIES', 'SERVICE', 'LOCATION', 'FOOD&DRINKS']
-        self.attribute_hotel = ['GENERAL', 'PRICES', 'DESIGN&FEATURES', 'CLEANLINESS', 'COMFORT', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
-        self.aspect_hotel = [f'{x}#{y}' for x in self.entity_hotel for y in self.attribute_hotel]
+        # self.entity_hotel = ['HOTEL', 'ROOMS', 'ROOM_AMENITIES', 'FACILITIES', 'SERVICE', 'LOCATION', 'FOOD&DRINKS']
+        # self.attribute_hotel = ['GENERAL', 'PRICES', 'DESIGN&FEATURES', 'CLEANLINESS', 'COMFORT', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
+        # self.aspect_hotel = [f'{x}#{y}' for x in self.entity_hotel for y in self.attribute_hotel]
+        self.aspect_hotel = ['rooms#prices', 'room_amenities#general', 'room_amenities#prices', 'hotel#prices',
+                             'rooms#cleanliness', 'location#general', 'facilities#quality', 'facilities#miscellaneous',
+                             'hotel#design&features', 'facilities#general', 'food&drinks#style&options', 'hotel#miscellaneous',
+                             'food&drinks#quality', 'rooms#miscellaneous', 'rooms#design&features', 'hotel#comfort',
+                             'food&drinks#prices', 'hotel#cleanliness', 'room_amenities#comfort', 'rooms#general',
+                             'room_amenities#quality', 'rooms#quality', 'facilities#design&features', 'facilities#cleanliness',
+                             'food&drinks#miscellaneous', 'room_amenities#miscellaneous', 'hotel#general', 'service#general',
+                             'rooms#comfort', 'room_amenities#cleanliness', 'facilities#comfort', 'facilities#prices',
+                             'room_amenities#design&features', 'hotel#quality']
 
         self.entity_restaurant = ['RESTAURANT', 'FOOD', 'DRINKS', 'AMBIENCE', 'SERVICE', 'LOCATION']
         self.attribute_restaurant = ['GENERAL', 'PRICES', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
         self.aspect_restaurant = [f'{x}#{y}' for x in self.entity_restaurant for y in self.attribute_restaurant]
 
+        self.cnt = 0
+        self.aspect_set = dict()
         self.polarities = ['negative', 'neural', 'positive']
 
         self.file = self.file.split('\n\n')
@@ -237,21 +276,18 @@ class VLSP2018ConditionalBert(Dataset):
         x = x.split('\n')
 
         aspect, polarity = x[0].split(',')
-        lb, _lb = None, None
 
-        if self.data == 'hotel':
-            lb = self.aspect_hotel.index(aspect)
-            _lb = torch.zeros((self.aspect_hotel.__len__()))
-        elif self.data == 'restaurant':
-            lb = self.aspect_restaurant.index(aspect)
-            _lb = torch.zeros((self.aspect_restaurant.__len__()))
-
-        _lb[lb] = 1
+        if aspect in self.aspect_set:
+            lb = self.aspect_set[aspect]
+        else:
+            lb = self.cnt
+            self.cnt += 1
+            self.aspect_set[aspect] = lb
 
         polarity = polarity.strip()
         polarity = ['negative', 'neutral', 'positive'].index(polarity)
         aspect = aspect.replace('#', ', ').replace('&', ' and ').lower()
-        return aspect, _lb, polarity
+        return aspect, lb, polarity
 
     def __getitem__(self, item):
         lines = self.file[item].split('\n')
