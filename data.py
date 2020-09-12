@@ -276,13 +276,16 @@ class VLSP2018ConditionalBert(Dataset):
         x = x.split('\n')
 
         aspect, polarity = x[0].split(',')
+        lb, _lb = None, None
 
-        if aspect in self.aspect_set:
-            lb = self.aspect_set[aspect]
-        else:
-            lb = self.cnt
-            self.cnt += 1
-            self.aspect_set[aspect] = lb
+        if self.data == 'hotel':
+            lb = self.aspect_hotel.index(aspect)
+            _lb = torch.zeros((self.aspect_hotel.__len__()))
+        elif self.data == 'restaurant':
+            lb = self.aspect_restaurant.index(aspect)
+            _lb = torch.zeros((self.aspect_restaurant.__len__()))
+
+        _lb[lb] = 1
 
         polarity = polarity.strip()
         polarity = ['negative', 'neutral', 'positive'].index(polarity)
