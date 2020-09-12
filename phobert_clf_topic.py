@@ -12,7 +12,7 @@ logger = get_logger('PhobertForSequenceClassification')
 
 
 class PhobertABSA(nn.Module):
-    def __init__(self, num_labels=56):
+    def __init__(self, num_labels=3):
         super(PhobertABSA, self).__init__()
         self.phobert = PhobertModel.from_pretrained('vinai/phobert-base')
         self.linear_1 = nn.Linear(768, 768, bias=True)
@@ -32,6 +32,7 @@ if __name__ == '__main__':
     num_epochs = 10
     device = 'cuda'
     batch_size = 4
+    accumulation_step = 50
 
     clf = PhobertABSA().to(device)
 
@@ -40,6 +41,11 @@ if __name__ == '__main__':
     test_loader = DataLoader(test, batch_size=2, shuffle=True)
 
     criterion = torch.nn.CrossEntropyLoss()
+
+    optimizer = torch.optim.AdamW(clf.parameters(), lr=3e-5)
+    lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,
+                                                              (train.__len__() // batch_size) * num_epochs,
+                                                              eta_min=0)
 
     for epoch in range(num_epochs):
         train_loss, test_loss = None, None
@@ -55,6 +61,12 @@ if __name__ == '__main__':
             preds = clf(items, attn_masks)
 
             loss = criterion(preds, labels)
+
+            loss.backward()
+            if idx != 0 and idx % accumulation_step == 0:
+                optimizer.step()
+                lr_scheduler.step()
+
             train_loss = train_loss + loss.item() if train_loss is not None else loss.item()
 
             preds = torch.argmax(preds, dim=-1).view(-1)

@@ -66,8 +66,9 @@ class VLSP2018BertPair(Dataset):
 
         try:
             label = self.label_encode(lines[1].strip())
-        except:
+        except Exception as ex:
             logger.info(lines)
+            logger.exception(ex)
             return None, None
 
         text = f'{lines[0].strip()} {label[0]}'
@@ -205,6 +206,6 @@ class VLSP2018BertPairTopic(Dataset):
         return self.file.__len__()
 
 
-data = VLSP2018BertPairTopic(file='test')
-for item, label in data:
-    print(item, label)
+# data = VLSP2018BertPairTopic(file='test')
+# for item, label in data:
+#     print(item, label)
