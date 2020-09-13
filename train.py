@@ -84,7 +84,7 @@ def train(data: str,
         for idx, (items, labels) in enumerate(tqdm(train_loader, desc=f'Training epoch {epoch}/{num_epochs}')):
             model.train()
             items = items.to(device)
-            # labels = labels.type(torch.FloatTensor).to(device)
+            labels = labels.type(torch.FloatTensor).to(device)
             attn_mask = (items > 0).to(device)
             preds = model(items, attn_mask)
 
