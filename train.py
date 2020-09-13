@@ -32,7 +32,7 @@ def evaluate(_preds, _targets):
 @click.option('--data', type=str, default='Hotel', help='Dataset use to train')
 @click.option('--device', type=str, default='cuda', help='Device use to train')
 @click.option('--gpus', type=str, default='0', help='GPUs id')
-@click.option('--batch_size', type=int, default=8, help='Training batch size')
+@click.option('--batch_size', type=int, default=16, help='Training batch size')
 @click.option('--num_epochs', type=int, default=10, help='Number of training epoch')
 @click.option('--learning_rate', type=float, default=2e-3, help='Learning rate')
 @click.option('--num_workers', type=int, default=4, help='Number of data loader workers')
