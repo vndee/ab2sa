@@ -141,9 +141,9 @@ class VLSP2018(Dataset):
             aspect, polarity = item.split(',')
 
             if self.data == 'hotel':
-                asp = self.aspect_hotel.index(aspect.strip())
+                asp = self.aspect_hotel.index(aspect.strip().lower())
             elif self.data == 'restaurant':
-                asp = self.aspect_restaurant.index(aspect.strip())
+                asp = self.aspect_restaurant.index(aspect.strip().lower())
             else:
                 asp = None
 
