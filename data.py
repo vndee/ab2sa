@@ -166,7 +166,7 @@ class VLSP2018(Dataset):
         text = ' '.join(text[0])
         text = torch.tensor(self.tokenizer.encode(text))
         labels = labels.squeeze(-1).type(torch.LongTensor)
-        # labels = torch.nn.functional.one_hot(labels)
+        labels = torch.nn.functional.one_hot(labels)
         return padding(text, self.max_length), labels
 
     def __len__(self):
