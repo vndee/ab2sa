@@ -25,6 +25,7 @@ def evaluate(_preds, _targets):
     acc = report['accuracy']
     f1 = report['macro avg']['f1-score']
 
+    print(report)
     return acc, f1
 
 
