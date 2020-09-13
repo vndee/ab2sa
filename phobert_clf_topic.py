@@ -32,7 +32,7 @@ class PhobertABSA(nn.Module):
 if __name__ == '__main__':
     num_epochs = 10
     device = 'cuda'
-    batch_size = 8
+    batch_size = 2
     accumulation_step = 50
 
 
@@ -42,6 +42,7 @@ if __name__ == '__main__':
 
     num_lb = train.aspect_hotel.__len__()
     clf = PhobertABSA(num_lb).to(device)
+    logger.info(clf)
 
     criterion = torch.nn.CrossEntropyLoss()
 
