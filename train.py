@@ -104,7 +104,7 @@ def train(data: str,
             # calc accuracy
             train_loss = train_loss + loss.item()
             preds = torch.argmax(preds, dim=-1).view(-1)
-            labels = labels.view(-1)
+            labels = torch.argmax(labels, dim=-1).view(-1)
 
             if device == 'cuda':
                 preds = preds.detach().cpu().numpy()
@@ -125,7 +125,7 @@ def train(data: str,
 
             for idx, (items, labels) in enumerate(tqdm(test_loader, desc=f'Validation epoch {epoch}/{num_epochs}')):
                 items = items.to(device)
-                # labels = labels.type(torch.FloatTensor).to(device)
+                labels = labels.type(torch.FloatTensor).to(device)
                 attn_mask = (items > 0).to(device)
                 preds = model(items, attn_mask)
 
@@ -139,7 +139,7 @@ def train(data: str,
 
                 val_loss = val_loss + loss.item()
                 preds = torch.argmax(preds, dim=-1).view(-1)
-                labels = labels.view(-1)
+                labels = torch.argmax(labels, dim=-1).view(-1)
 
                 if device == 'cuda':
                     preds = preds.detach().cpu().numpy()
