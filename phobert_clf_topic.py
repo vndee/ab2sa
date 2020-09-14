@@ -28,7 +28,6 @@ class PhobertABSA(nn.Module):
         # cls = outputs[0][:, 0, :]
         x = self.linear_1(x)
         x = x.squeeze(-1)
-        logger.info(x.shape)
         return x
 
 
