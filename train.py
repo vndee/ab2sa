@@ -115,9 +115,9 @@ def train(data: str,
                 preds = preds.detach().numpy()
                 labels = labels.detach().numpy()
 
+            intersect_pl, A, B = 0, 0, 0
+            intersect_ap, all_ap = 0, 0
             for i in range(preds.shape[0]):
-                intersect_pl, A, B = 0, 0, 0
-                intersect_ap, all_ap = 0, 0
                 for j in range(preds.shape[1]):
                     if preds[i][j] < 3 and labels[i][j] < 3:
                         intersect_ap += 1
@@ -173,9 +173,9 @@ def train(data: str,
                     preds = preds.detach().numpy()
                     labels = labels.detach().numpy()
 
+                intersect_pl, A, B = 0, 0, 0
+                intersect_ap, all_ap = 0, 0
                 for i in range(preds.shape[0]):
-                    intersect_pl, A, B = 0, 0, 0
-                    intersect_ap, all_ap = 0, 0
                     for j in range(preds.shape[1]):
                         if preds[i][j] < 3 and labels[i][j] < 3:
                             intersect_ap += 1
