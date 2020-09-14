@@ -15,7 +15,6 @@ class FocalLoss(nn.Module):
         #                                               targets,
         #                                               reduction='none',
         #                                               weight=torch.tensor([.303, .303, .303, .091]).to(self.device))
-
         loss = None
         for i, j, in zip(inputs, targets):
             x = F.cross_entropy(i, torch.argmax(j, dim=-1).to(self.device))

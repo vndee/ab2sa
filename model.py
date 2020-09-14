@@ -72,7 +72,7 @@ class Model(nn.Module):
         super(Model, self).__init__()
         self.phobert = PhobertModel.from_pretrained('vinai/phobert-base')
         for param in self.phobert.parameters():
-            param.requires_grad = False
+            param.requires_grad = True
 
         self.slot_attn = SlotAttention(num_slots=num_aspect,
                                        dim=embedding_dim,
