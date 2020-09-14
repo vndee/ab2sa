@@ -18,7 +18,7 @@ class FocalLoss(nn.Module):
 
         loss = None
         for i, j, in zip(inputs, targets):
-            x = F.cross_entropy(i, j.to(self.device))
+            x = F.cross_entropy(i, torch.argmax(j, dim=-1).to(self.device))
             loss = loss + x if loss is not None else x
 
         return loss
