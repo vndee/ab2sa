@@ -163,8 +163,8 @@ def train(data: str,
                 #     loss = loss + _loss if loss is not None else _loss
 
                 val_loss = val_loss + loss.item()
-                preds = torch.argmax(preds, dim=-1).view(-1)
-                labels = torch.argmax(labels, dim=-1).view(-1)
+                preds = torch.argmax(preds, dim=-1)
+                labels = torch.argmax(labels, dim=-1)
 
                 if device == 'cuda':
                     preds = preds.detach().cpu().numpy()
