@@ -1,12 +1,12 @@
 import torch
 import numpy as np
 import torch.nn as nn
-from utils import get_logger
 from tqdm import tqdm
-from data import VLSP2018BertPairTopic
 from train import evaluate
-from torch.utils.data import DataLoader
+from utils import get_logger
 from model import SlotAttention
+from data import VLSP2018BertPairTopic
+from torch.utils.data import DataLoader
 from transformers import PhobertTokenizer, PhobertModel, RobertaConfig, RobertaForSequenceClassification
 
 

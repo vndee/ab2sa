@@ -43,7 +43,7 @@ if __name__ == '__main__':
     train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test, batch_size=batch_size, shuffle=True)
 
-    criterion = torch.nn.CrossEntropyLoss()
+    criterion = torch.nn.NLLLoss()
 
     optimizer = torch.optim.AdamW(clf.parameters(), lr=1e-3)
     lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,
