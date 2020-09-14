@@ -54,8 +54,8 @@ def train(data: str,
 
     # Load dataset
     train_dataset, test_dataset = VLSP2018(data=data, file='train'), VLSP2018(data=data, file='test')
-    train_loader, test_loader = DataLoader(train_dataset, shuffle=True, batch_size=batch_size, num_workers=num_workers),\
-                                DataLoader(test_dataset, shuffle=True, batch_size=batch_size, num_workers=num_workers)
+    train_loader, test_loader = DataLoader(train_dataset, shuffle=True, batch_size=batch_size),\
+                                DataLoader(test_dataset, shuffle=True, batch_size=batch_size)
 
     # Build model
     num_aspect, num_polarity = train_dataset.num_aspect, train_dataset.num_polarity
