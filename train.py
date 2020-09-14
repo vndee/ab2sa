@@ -64,9 +64,9 @@ def train(data: str,
         model = torch.nn.DataParallel(model)
 
     # Criterion
-    criterion = FocalLoss()
+    # criterion = FocalLoss()
     # criterion = torch.nn.BCEWithLogitsLoss()
-    # criterion = torch.nn.CrossEntropyLoss()
+    criterion = torch.nn.CrossEntropyLoss()
     # criterion = torch.nn.MultiLabelMarginLoss()
 
     # Optimizer
