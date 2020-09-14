@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     criterion = torch.nn.CrossEntropyLoss()
 
-    optimizer = torch.optim.AdamW(clf.parameters(), lr=3e-5)
+    optimizer = torch.optim.AdamW(clf.parameters(), lr=1e-3)
     lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,
                                                               (train.__len__() // batch_size) * num_epochs,
                                                               eta_min=0)
