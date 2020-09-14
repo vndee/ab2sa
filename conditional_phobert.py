@@ -8,7 +8,7 @@ from train import evaluate
 from torch.utils.data import DataLoader
 from transformers import PhobertModel
 
-logger = get_logger('PhobertForSequenceClassification')
+logger = get_logger('Conditional PhoBERT')
 
 
 class PhobertABSA(nn.Module):
