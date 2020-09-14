@@ -64,9 +64,9 @@ def train(data: str,
         model = torch.nn.DataParallel(model)
 
     # Criterion
-    # criterion = FocalLoss()
+    criterion = FocalLoss()
     # criterion = torch.nn.BCEWithLogitsLoss()
-    criterion = torch.nn.CrossEntropyLoss()
+    # criterion = torch.nn.CrossEntropyLoss()
     # criterion = torch.nn.MultiLabelMarginLoss()
 
     # Optimizer
@@ -86,7 +86,7 @@ def train(data: str,
         for idx, (items, labels) in enumerate(tqdm(train_loader, desc=f'Training epoch {epoch}/{num_epochs}')):
             model.train()
             items = items.to(device)
-            labels = labels.type(torch.FloatTensor).to(device)
+            labels = labels.type(torch.LongTensor).to(device)
             attn_mask = (items > 0).to(device)
             preds = model(items, attn_mask)
 
