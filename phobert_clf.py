@@ -6,6 +6,7 @@ from tqdm import tqdm
 from data import VLSP2018BertPair
 from train import evaluate
 from torch.utils.data import DataLoader
+from model import SlotAttention
 from transformers import PhobertTokenizer, PhobertModel, RobertaConfig, RobertaForSequenceClassification
 
 logger = get_logger('PhobertForSequenceClassification')
@@ -15,23 +16,25 @@ class PhobertABSA(nn.Module):
     def __init__(self, num_labels=3):
         super(PhobertABSA, self).__init__()
         self.phobert = PhobertModel.from_pretrained('vinai/phobert-base')
-        self.linear_1 = nn.Linear(768, 768, bias=True)
-        self.dropout = nn.Dropout(p=0.1, inplace=False)
-        self.linear_2 = nn.Linear(768, num_labels, bias=True)
+        self.slot_attn = SlotAttention(num_slots=num_labels,
+                                       dim=768,
+                                       hidden_dim=768)
+        self.linear_1 = nn.Linear(768, 1, bias=True)
 
     def forward(self, x, attn_mask):
         outputs = self.phobert(x, attention_mask=attn_mask)
-        cls = outputs[0][:, 0, :]
-        x = self.linear_1(cls)
-        x = self.dropout(x)
-        x = self.linear_2(x)
+        x = self.slot_attn(outputs[0])
+        # cls = outputs[0][:, 0, :]
+        x = self.linear_1(x)
+        x = x.squeeze(-1)
+        # logger.info(x.shape)
         return x
 
 
 if __name__ == '__main__':
     num_epochs = 10
     device = 'cuda'
-    batch_size = 16
+    batch_size = 2
     accumulation_step = 50
 
     clf = PhobertABSA().to(device)
@@ -59,7 +62,6 @@ if __name__ == '__main__':
             labels = labels.to(device)
 
             preds = clf(items, attn_masks)
-
             loss = criterion(preds, labels)
 
             loss.backward()

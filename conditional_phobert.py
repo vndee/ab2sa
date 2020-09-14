@@ -1,12 +1,12 @@
 import torch
 import numpy as np
 import torch.nn as nn
-from utils import get_logger
 from tqdm import tqdm
-from data import VLSP2018ConditionalBert
 from train import evaluate
-from torch.utils.data import DataLoader
+from utils import get_logger
 from transformers import PhobertModel
+from torch.utils.data import DataLoader
+from data import VLSP2018ConditionalBert
 
 logger = get_logger('Conditional PhoBERT')
 
@@ -61,7 +61,6 @@ if __name__ == '__main__':
             aspects = aspects.to(device)
 
             preds = clf(items, attn_masks, aspects)
-
             loss = criterion(preds, labels)
 
             loss.backward()
@@ -96,7 +95,6 @@ if __name__ == '__main__':
                 aspects = aspects.to(device)
 
                 preds = clf(items, attn_masks, aspects)
-
                 loss = criterion(preds, labels)
                 test_loss = test_loss + loss.item() if test_loss is not None else loss.item()
 
