@@ -36,7 +36,7 @@ def evaluate(_preds, _targets):
 @click.option('--batch_size', type=int, default=16, help='Training batch size')
 @click.option('--num_epochs', type=int, default=10, help='Number of training epoch')
 @click.option('--learning_rate', type=float, default=2e-3, help='Learning rate')
-@click.option('--num_workers', type=int, default=2, help='Number of data loader workers')
+@click.option('--num_workers', type=int, default=3, help='Number of data loader workers')
 @click.option('--accumulation_step', type=int, default=100, help='Optimizer accumulation step')
 @click.option('--experiment_path', type=str, default='outputs/', help='Experiment output path')
 def train(data: str,
