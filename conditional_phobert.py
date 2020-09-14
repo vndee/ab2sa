@@ -6,7 +6,7 @@ from tqdm import tqdm
 from data import VLSP2018ConditionalBert
 from train import evaluate
 from torch.utils.data import DataLoader
-from transformers import PhobertTokenizer, PhobertModel, RobertaConfig, RobertaForSequenceClassification
+from transformers import PhobertModel
 
 logger = get_logger('PhobertForSequenceClassification')
 
