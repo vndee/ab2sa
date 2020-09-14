@@ -22,7 +22,6 @@ class SlotAttention(nn.Module):
         self._to_v = nn.Linear(dim, dim)
 
         self._gru = nn.GRUCell(dim, dim)
-
         hidden_dim = max(dim, hidden_dim)
 
         self._mlp = nn.Sequential(

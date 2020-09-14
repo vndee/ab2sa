@@ -38,7 +38,6 @@ if __name__ == '__main__':
     batch_size = 2
     accumulation_step = 50
 
-
     train, test = VLSP2018BertPairTopic(data='Hotel', file='train'), VLSP2018BertPairTopic(data='Hotel', file='test')
     train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test, batch_size=batch_size, shuffle=True)
@@ -47,7 +46,7 @@ if __name__ == '__main__':
     clf = PhobertABSA(num_lb).to(device)
     logger.info(clf)
 
-    criterion = torch.nn.CrossEntropyLoss()
+    criterion = torch.nn.NLLLoss()
 
     optimizer = torch.optim.AdamW(clf.parameters(), lr=3e-5)
     lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,
