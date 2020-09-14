@@ -35,7 +35,7 @@ class PhobertABSA(nn.Module):
 if __name__ == '__main__':
     num_epochs = 10
     device = 'cuda'
-    batch_size = 2
+    batch_size = 16
     accumulation_step = 50
 
     train, test = VLSP2018BertPairTopic(data='Hotel', file='train'), VLSP2018BertPairTopic(data='Hotel', file='test')
