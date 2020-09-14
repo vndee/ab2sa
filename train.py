@@ -25,7 +25,7 @@ def evaluate(_preds, _targets):
     acc = report['accuracy']
     f1 = report['macro avg']['f1-score']
 
-    print(report)
+    # print(report)
     return acc, f1
 
 
@@ -128,7 +128,11 @@ def train(data: str,
                     if preds[i][j] < 3 and labels[i][j] < 3 and preds[i][j] == labels[i][j]:
                         intersect_pl += 1
 
-            precision, recall = intersect_ap / A, intersect_ap / B
+            if A != 0 and B != 0:
+                precision, recall = intersect_ap / A, intersect_ap / B
+            else:
+                precision, recall = 0, 0
+
             if precision + recall > 0:
                 train_f1 += (2 * precision * recall) / (precision + recall)
             train_tt_f1 += preds.shape[0]
@@ -182,7 +186,11 @@ def train(data: str,
                         if preds[i][j] < 3 and labels[i][j] < 3 and preds[i][j] == labels[i][j]:
                             intersect_pl += 1
 
-                precision, recall = intersect_ap / A, intersect_ap / B
+                if A != 0 and B != 0:
+                    precision, recall = intersect_ap / A, intersect_ap / B
+                else:
+                    precision, recall = 0, 0
+
                 if precision + recall > 0:
                     test_f1 += (2 * precision * recall) / (precision + recall)
                 test_tt_f1 += preds.shape[0]
