@@ -144,11 +144,10 @@ def train(data: str,
             model.eval()
             val_loss = 0.0
             _preds, _targets = None, None
-            test_f1, test_tt_f1 = 0, 0
 
             for idx, (items, labels) in enumerate(tqdm(test_loader, desc=f'Validation epoch {epoch}/{num_epochs}')):
                 items = items.to(device)
-                labels = labels.type(torch.FloatTensor).to(device)
+                labels = labels.type(torch.LongTensor).to(device)
                 attn_mask = (items > 0).to(device)
                 preds = model(items, attn_mask)
 
