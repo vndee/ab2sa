@@ -86,7 +86,7 @@ class VLSP2018BertPair(Dataset):
         text = f'{lines[0].strip()} {label[0]}'
         text = self.rdr_segmenter.tokenize(text)
         text = ' '.join(text[0])
-        text = torch.tensor(self.tokenizer.encode(text))
+        text = torch.tensor(self.tokenizer.encode(text, max_length=self.max_length, truncation=True))
         return padding(text, self.max_length), label[-1]
 
     def __len__(self):
@@ -106,9 +106,6 @@ class VLSP2018(Dataset):
 
         self.data = data.lower()
 
-        # self.entity_hotel = ['HOTEL', 'ROOMS', 'ROOM_AMENITIES', 'FACILITIES', 'SERVICE', 'LOCATION', 'FOOD&DRINKS']
-        # self.attribute_hotel = ['GENERAL', 'PRICES', 'DESIGN&FEATURES', 'CLEANLINESS', 'COMFORT', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
-        # self.aspect_hotel = [f'{x}#{y}' for x in self.entity_hotel for y in self.attribute_hotel]
         self.aspect_hotel = ['rooms#prices', 'room_amenities#general', 'room_amenities#prices', 'hotel#prices',
                              'rooms#cleanliness', 'location#general', 'facilities#quality', 'facilities#miscellaneous',
                              'hotel#design&features', 'facilities#general', 'food&drinks#style&options', 'hotel#miscellaneous',
@@ -119,9 +116,6 @@ class VLSP2018(Dataset):
                              'rooms#comfort', 'room_amenities#cleanliness', 'facilities#comfort', 'facilities#prices',
                              'room_amenities#design&features', 'hotel#quality']
 
-        # self.entity_restaurant = ['RESTAURANT', 'FOOD', 'DRINKS', 'AMBIENCE', 'SERVICE', 'LOCATION']
-        # self.attribute_restaurant = ['GENERAL', 'PRICES', 'QUALITY', 'STYLE&OPTIONS', 'MISCELLANEOUS']
-        # self.aspect_restaurant = [f'{x}#{y}' for x in self.entity_restaurant for y in self.attribute_restaurant]
         self.aspect_restaurant = ['drinks#quality', 'drinks#style&options', 'service#general', 'restaurant#prices',
                                   'food#quality', 'drinks#prices', 'ambience#general', 'food#prices', 'restaurant#miscellaneous',
                                   'restaurant#general', 'location#general', 'food#style&options']
@@ -236,7 +230,7 @@ class VLSP2018BertPairTopic(Dataset):
         text = f'{lines[0].strip()} {label[0]}'
         text = self.rdr_segmenter.tokenize(text)
         text = ' '.join(text[0])
-        text = torch.tensor(self.tokenizer.encode(text))
+        text = torch.tensor(self.tokenizer.encode(text, max_length=self.max_length, truncation=True))
         return padding(text, self.max_length), label[1]
 
     def __len__(self):
@@ -311,7 +305,7 @@ class VLSP2018ConditionalBert(Dataset):
         text = f'{lines[0].strip()}'
         text = self.rdr_segmenter.tokenize(text)
         text = ' '.join(text[0])
-        text = torch.tensor(self.tokenizer.encode(text))
+        text = torch.tensor(self.tokenizer.encode(text, max_length=self.max_length, truncation=True))
         return padding(text, self.max_length), label[1], label[-1]
 
     def __len__(self):
