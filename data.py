@@ -143,7 +143,6 @@ class VLSP2018(Dataset):
 
             plr = ['negative', 'neutral', 'positive'].index(polarity.strip())
             lb_list.append((asp, plr))
-            # aspect = aspect.replace('#', ', ').replace('&', ' and ').lower()
 
         return lb_list
 
