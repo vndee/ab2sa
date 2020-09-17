@@ -99,7 +99,7 @@ def train(data: str,
             loss.backward()
             if idx != 0 and idx % accumulation_step == 0:
                 optimizer.step()
-                lr_scheduler.step()
+                # lr_scheduler.step()
 
             # calc accuracy
             train_loss = train_loss + loss.item()

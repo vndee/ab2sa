@@ -86,8 +86,9 @@ class HybridDataset(Dataset):
         text = lines[1].strip()
         text = self.rdr_segmenter.tokenize(text)
 
+        text = [item for sublist in text for item in sublist]
         word_respect_to_polarity = list()
-        for w in text[0]:
+        for w in text:
             if w in term_frequencies:
                 term_frequency = term_frequencies[w]
             else:
@@ -110,7 +111,7 @@ class HybridDataset(Dataset):
 
             word_respect_to_polarity.append(tf_idf)
 
-        text = ' '.join(text[0])
+        text = ' '.join(text)
         text = torch.tensor(self.tokenizer.encode(text))
         labels = labels.squeeze(-1).type(torch.LongTensor)
         labels = torch.nn.functional.one_hot(labels)
