@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 from utils import get_logger
-from transformers import PhobertModel
+from transformers import AutoModel
 
 logger = get_logger('Model')
 
@@ -70,7 +70,7 @@ class SlotAttention(nn.Module):
 class Model(nn.Module):
     def __init__(self, num_aspect, num_polarity, embedding_dim=768, slot_attention_hidden_dim=512):
         super(Model, self).__init__()
-        self.phobert = PhobertModel.from_pretrained('vinai/phobert-base')
+        self.phobert = AutoModel.from_pretrained('vinai/phobert-base')
         for param in self.phobert.parameters():
             param.requires_grad = True
 

@@ -2,7 +2,7 @@ import os
 import torch
 from utils import get_logger
 from torch.utils.data import Dataset
-from transformers import PhobertTokenizer
+from transformers import AutoTokenizer
 from vncorenlp import VnCoreNLP
 
 logger = get_logger('Data Loader')
@@ -55,7 +55,7 @@ class VLSP2018BertPair(Dataset):
 
         self.file = self.file.strip().split('\n\n')
         self.rdr_segmenter = VnCoreNLP('./vncorenlp/VnCoreNLP-1.1.1.jar', annotators='wseg', max_heap_size='-Xmx500m')
-        self.tokenizer = PhobertTokenizer.from_pretrained('vinai/phobert-base')
+        self.tokenizer = AutoTokenizer.from_pretrained('vinai/phobert-base')
 
     def label_encode(self, x):
         x = x.split('\n')
@@ -132,7 +132,7 @@ class VLSP2018(Dataset):
         self.file = self.file.split('\n\n')
 
         self.rdr_segmenter = VnCoreNLP('./vncorenlp/VnCoreNLP-1.1.1.jar', annotators='wseg', max_heap_size='-Xmx500m')
-        self.tokenizer = PhobertTokenizer.from_pretrained('vinai/phobert-base')
+        self.tokenizer = AutoTokenizer.from_pretrained('vinai/phobert-base')
 
     def label_encode(self, x):
         lb_list = list()
@@ -211,7 +211,7 @@ class VLSP2018BertPairTopic(Dataset):
 
         self.file = self.file.split('\n\n')
         self.rdr_segmenter = VnCoreNLP('./vncorenlp/VnCoreNLP-1.1.1.jar', annotators='wseg', max_heap_size='-Xmx500m')
-        self.tokenizer = PhobertTokenizer.from_pretrained('vinai/phobert-base')
+        self.tokenizer = AutoTokenizer.from_pretrained('vinai/phobert-base')
 
     def label_encode(self, x):
         x = x.split('\n')
@@ -282,7 +282,7 @@ class VLSP2018ConditionalBert(Dataset):
 
         self.file = self.file.strip().split('\n\n')
         self.rdr_segmenter = VnCoreNLP('./vncorenlp/VnCoreNLP-1.1.1.jar', annotators='wseg', max_heap_size='-Xmx500m')
-        self.tokenizer = PhobertTokenizer.from_pretrained('vinai/phobert-base')
+        self.tokenizer = AutoTokenizer.from_pretrained('vinai/phobert-base')
 
     def label_encode(self, x):
         x = x.split('\n')
