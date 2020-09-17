@@ -161,9 +161,9 @@ class VLSP2018(Dataset):
         for lb in label:
             labels[lb[0]] = lb[1]
 
-        text = lines[0].strip()
+        text = lines[1].strip()
         text = self.rdr_segmenter.tokenize(text)
-        text = ' '.join(text[0])
+        text = ' '.join([' '.join(tex) for tex in text])
         text = torch.tensor(self.tokenizer.encode(text))
         labels = labels.squeeze(-1).type(torch.LongTensor)
         labels = torch.nn.functional.one_hot(labels)
