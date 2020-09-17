@@ -80,8 +80,8 @@ def train(data: str,
         _preds, _targets = None, None
         train_f1, train_tt_f1 = 0, 0
 
+        model.train()
         for idx, (items, labels) in enumerate(tqdm(train_loader, desc=f'Training epoch {epoch}/{num_epochs}')):
-            model.train()
             items = items.to(device)
             labels = labels.type(torch.LongTensor).to(device)
             attn_mask = (items > 0).to(device)
@@ -95,6 +95,7 @@ def train(data: str,
             #     _loss = criterion(pred, label)
             #     loss = loss + _loss if loss is not None else _loss
 
+            optimizer.zero_grad()
             loss.backward()
             if idx != 0 and idx % accumulation_step == 0:
                 optimizer.step()
