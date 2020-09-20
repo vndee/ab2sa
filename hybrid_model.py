@@ -113,7 +113,7 @@ class HybridDataset(Dataset):
                 word_respect_to_polarity = torch.cat((word_respect_to_polarity, lst.unsqueeze(0)), dim=0)
 
         text = ' '.join(text)
-        text = torch.tensor(self.tokenizer.encode(text, padding=self.max_length, truncation=True))
+        text = torch.tensor(self.tokenizer.encode(text, padding='longest', max_length=self.max_length, truncation=True))
         labels = labels.squeeze(-1).type(torch.LongTensor)
         labels = torch.nn.functional.one_hot(labels)
 
