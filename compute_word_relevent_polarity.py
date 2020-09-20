@@ -21,19 +21,27 @@ with open(os.path.join('dataset', 'VLSP2016', 'SA-2016.train'), 'r') as stream:
         content = rdr_segmenter.tokenize(content)[0]
 
         for word in content:
-            term_frequencies[word] = {
-                'NEG': 0,
-                'NEU': 0,
-                'POS': 0
-            }
-            term_frequencies[word][document] += 1
-
-            if word not in word_in_doc:
-                word_in_doc[word] = dict()
-                word_in_doc[word] = {
-                    document: 1
+            if word not in term_frequencies:
+                term_frequencies[word] = {
+                    'NEG': 0,
+                    'NEU': 0,
+                    'POS': 0
                 }
-            else:
-                word_in_doc[word][document] = 1
+
+            term_frequencies[word][document] += 1
+            # term_frequencies[word] = {
+            #     'NEG': 0,
+            #     'NEU': 0,
+            #     'POS': 0
+            # }
+            # term_frequencies[word][document] += 1
+            #
+            # if word not in word_in_doc:
+            #     word_in_doc[word] = dict()
+            #     word_in_doc[word] = {
+            #         document: 1
+            #     }
+            # else:
+            #     word_in_doc[word][document] = 1
 
 logger.info('Computed accessories.')

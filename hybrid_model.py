@@ -1,9 +1,13 @@
 import os
 import math
 import torch
+import argparse
+import numpy as np
+import torch.nn as nn
 from utils import get_logger
 from vncorenlp import VnCoreNLP
-from transformers import PhobertTokenizer
+from torch.autograd import Variable
+from transformers import AutoTokenizer, AutoModel
 from torch.utils.data import Dataset, DataLoader
 from compute_word_relevent_polarity import word_in_doc, term_frequencies
 
@@ -53,7 +57,7 @@ class HybridDataset(Dataset):
         self.file = self.file.split('\n\n')
 
         self.rdr_segmenter = VnCoreNLP('./vncorenlp/VnCoreNLP-1.1.1.jar', annotators='wseg', max_heap_size='-Xmx500m')
-        self.tokenizer = PhobertTokenizer.from_pretrained('vinai/phobert-base')
+        self.tokenizer = AutoTokenizer.from_pretrained('vinai/phobert-base')
 
         self.doc = ['NEG', 'NEU', 'POS']
 
@@ -87,7 +91,7 @@ class HybridDataset(Dataset):
         text = self.rdr_segmenter.tokenize(text)
 
         text = [item for sublist in text for item in sublist]
-        word_respect_to_polarity = list()
+        word_respect_to_polarity = None
         for w in text:
             if w in term_frequencies:
                 term_frequency = term_frequencies[w]
@@ -98,30 +102,91 @@ class HybridDataset(Dataset):
                     'POS': 0
                 }
 
-            if w in word_in_doc:
-                w_in_doc = word_in_doc[w]
+            lst = [v for k, v in term_frequency.items()]
+            lst = torch.nn.functional.softmax(torch.from_numpy(np.asarray(lst)).type(torch.FloatTensor), dim=0)
+
+            if word_respect_to_polarity is None:
+                word_respect_to_polarity = lst
+            elif len(word_respect_to_polarity.shape) == 1:
+                word_respect_to_polarity = torch.stack((word_respect_to_polarity, lst), dim=0)
             else:
-                w_in_doc = {}
-
-            tf_idf = []
-            for doc in self.doc:
-                tf = 1 + math.log(term_frequency[doc]) if term_frequency[doc] != 0 else 1
-                idf = math.log(3 / (1 + len(w_in_doc)), 10)
-                tf_idf.append(tf * idf)
-
-            word_respect_to_polarity.append(tf_idf)
+                word_respect_to_polarity = torch.cat((word_respect_to_polarity, lst.unsqueeze(0)), dim=0)
 
         text = ' '.join(text)
-        text = torch.tensor(self.tokenizer.encode(text))
+        text = torch.tensor(self.tokenizer.encode(text, padding=self.max_length, truncation=True))
         labels = labels.squeeze(-1).type(torch.LongTensor)
         labels = torch.nn.functional.one_hot(labels)
+
+        if word_respect_to_polarity.shape[0] < self.max_length:
+            adjust_size = self.max_length - word_respect_to_polarity.shape[0]
+            adjust_tensor = torch.zeros((adjust_size, 3))
+            word_respect_to_polarity = torch.cat((word_respect_to_polarity, adjust_tensor), dim=0)
+
         return padding(text, self.max_length), word_respect_to_polarity, labels
 
     def __len__(self):
         return self.file.__len__()
 
 
+class BiLSTM_Attention(nn.Module):
+    def __init__(self, embedding_size=768 + 3, lstm_hidden_size=512, num_classes=4, num_aspect=10, device='cuda'):
+        super(BiLSTM_Attention, self).__init__()
+        self.embedding_size = embedding_size
+        self.lstm_hidden_size = lstm_hidden_size
+        self.num_classes = num_classes
+        self.num_aspect = num_aspect
+        self.device = device
+
+        self.lstm = torch.nn.LSTM(self.embedding_size, self.lstm_hidden_size, bidirectional=True, batch_first=True)
+        self.out = torch.nn.Linear(2 * self.lstm_hidden_size, self.num_aspect * self.num_classes)
+
+    def attention_net(self, lstm_output, final_state):
+        hidden = final_state.view(-1, self.lstm_hidden_size * 2, 1)
+        attn_weights = torch.bmm(lstm_output, hidden).squeeze(2)
+        soft_attn_weights = torch.nn.functional.softmax(attn_weights, 1)
+        context = torch.bmm(lstm_output.transpose(1, 2), soft_attn_weights.unsqueeze(2)).squeeze(2)
+        return context, soft_attn_weights.data
+
+    def forward(self, x, wrp):
+        x = torch.cat((x, wrp), dim=-1)
+        hidden_state = Variable(torch.zeros(1 * 2, x.shape[0], self.lstm_hidden_size, device=self.device))
+        cell_state = Variable(torch.zeros(1 * 2, x.shape[0], self.lstm_hidden_size, device=self.device))
+
+        output, (final_hidden_state, final_cell_state) = self.lstm(x, (hidden_state, cell_state))
+        attn_output, attention = self.attention_net(output, final_hidden_state)
+        x = self.out(attn_output)
+        return x
+
+
+def calc_loss(preds, targets):
+    return 0
+
+
 if __name__ == '__main__':
-    dataset = HybridDataset()
-    for item, wrp, lb in dataset:
-        print(wrp)
+    argument_parser = argparse.ArgumentParser(description='Lan cuoi cung')
+    argument_parser.add_argument('--data', type=str, default='Hotel')
+    argument_parser.add_argument('--device', type=str, default='cuda')
+    argument_parser.add_argument('--batch_size', type=int, default=2)
+    args = argument_parser.parse_args()
+
+    train, test = HybridDataset(data=args.data, file='train'), HybridDataset(data=args.data, file='test')
+
+    train_loader = DataLoader(train, shuffle=True, batch_size=args.batch_size)
+    test_loader = DataLoader(test, shuffle=True, batch_size=args.batch_size)
+
+    net = BiLSTM_Attention().to(args.device)
+    phobert = AutoModel.from_pretrained('vinai/phobert-base').to(args.device)
+
+    logger.info(phobert)
+    logger.info(net)
+
+    for idx, (items, wrp, labels) in enumerate(train_loader):
+        items = items.to(args.device)
+        wrp = wrp.to(args.device)
+        labels = labels.to(args.device)
+        attn_mask = (items > 0).to(args.device)
+
+        inputs = phobert(items, attention_mask=attn_mask)[0]
+        preds = net(inputs, wrp)
+
+        loss = calc_loss(preds, labels)
