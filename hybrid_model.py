@@ -188,5 +188,5 @@ if __name__ == '__main__':
 
         inputs = phobert(items, attention_mask=attn_mask)[0]
         preds = net(inputs, wrp)
-
+        logger.info(preds.shape)
         loss = calc_loss(preds, labels)
